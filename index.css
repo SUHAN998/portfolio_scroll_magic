@@ -1,0 +1,1296 @@
+/* 1. 폰트 및 기본 설정 */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+
+
+/* 1. 인트로 레이어 전체 설정 */
+#intro-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* 모든 요소보다 위에 */
+    transition: opacity 1.5s ease; /* 검은 화면 사라지는 속도 */
+}
+
+/* 2. Welcome 글자 스타일 및 애니메이션 */
+.welcome-text {
+    color: #fff;
+    font-size: 80px;
+    font-weight: 200;
+    letter-spacing: 10px;
+    opacity: 0;
+    animation: welcomeFade 3s forwards; /* 3초 동안 나타났다 사라짐 */
+}
+
+@keyframes welcomeFade {
+    0% { opacity: 0; transform: translateY(20px); }
+    40% { opacity: 1; transform: translateY(0); }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* 3. 메인 화면 초기 상태 (흐림) */
+#home {
+    filter: blur(15px); /* 처음에 흐리게 */
+    transition: filter 2s ease; /* 선명해지는 속도 */
+}
+
+/* JS에서 추가할 클래스: 선명해진 상태 */
+#home.reveal {
+    filter: blur(0px);
+}
+
+
+
+
+/* 1. 홈 섹션은 고정되어 있되, 다른 섹션이 위로 올라오게 설정 */
+/* 77행 근처 수정 */
+#home {
+    position: relative; /* sticky -> relative로 변경 */
+    width: 100%;
+    height: 100vh;
+    z-index: 1; 
+    overflow: hidden;
+}
+
+/* 홈 화면 위에 깔릴 검정색 필터 (가상 요소) */
+#home::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0; /* 처음엔 투명 */
+    transition: opacity 0.5s ease;
+    pointer-events: none; /* 필터가 클릭을 방해하지 않게 */
+    z-index: 10;
+}
+
+/* 어두워진 상태 클래스 */
+#home.darken::after {
+    opacity: 0.7; /* 0.5~0.8 사이에서 어두움 정도 조절 */
+}
+
+/* About 섹션 설정 */
+#about {
+    position: relative;
+    z-index: 2; /* 홈보다 위에 위치 */
+    background-color: #1b1b36; /* 배경색이 있어야 아래 홈을 가림 */
+    box-shadow: 0 -20px 50px rgba(0,0,0,0.5); /* 올라올 때 입체감을 위해 그림자 추가 */
+}
+
+
+
+
+
+
+
+
+body { 
+    margin: 0;
+    font-family: 'Pretendard', sans-serif; 
+    /* 섹션이 많아질 것이므로 고정 높이보다는 최소 높이 권장 */
+    min-height: 2000px; 
+    background-color: rgb(58, 53, 87);
+}
+
+
+/* 2. 섹션 레이아웃 */
+section {
+    width: 100%;
+    height: 100vh;
+    text-align: center;
+    display: flex; /* 중앙 정렬을 위해 추가 */
+    flex-direction: column;
+    justify-content: center;
+}
+
+section:nth-child(odd) {
+    background-color: #4b4966;
+}
+
+.title {
+    margin-bottom: 20px;
+    text-align: left;
+    padding-left: 10%;
+    /* 추가: 마우스 반응 시 부드러운 움직임을 위해 */
+    transition: transform 0.1s ease-out; 
+    will-change: transform; 
+    pointer-events: none; /* 글자가 마우스를 가려서 별자리가 안 끊기게 설정 */
+}
+
+.title .sub-text {
+    font-size: 45px;
+    margin-bottom: 5px;
+}
+
+.title h1 {
+    font-size: 110px;
+    margin: 0;
+}
+
+.wrapper {
+    max-width: 1600px; /* 1200에서 확 키워버리세요 */
+    margin: 0 auto;
+    padding: 0 20%; /* 좌우에 화면 너비의 20%만큼 여백을 줌 */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 3. 타이포그래피 */
+/* h1 {
+    color: rgb(68, 168, 207);
+    font-size: 48px;
+    margin-bottom: 10px;
+} */
+
+.sub-text {
+    font-size: 18px;
+    letter-spacing: 2px; /* 자간을 넓히면 더 고급스러워 보입니다 */
+    text-transform: uppercase; /* 영문을 대문자로 변환 */
+    color: #b6b4d2;
+}
+
+h1 {
+    font-size: 60px; /* 메인 타이틀은 더 강조 */
+    color: #ffffff;
+    /* margin-top: 10px; */
+    
+}
+
+
+
+h2 {
+    font-size: 35px;
+    margin-bottom: 18px;
+    color: #deddfe;
+}
+
+h3 {
+    font-size: 24px;
+    font-weight: 300;
+    color: #bcbbe5;
+}
+
+/* 4. 상단 네비게이션 (Fixed Menu) */
+.btns {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 999;
+}
+
+.btns .container {
+    position: relative;
+    /* max-width: 900px; */
+    padding: 15px 20px;
+    margin: auto;
+    /* 반투명 글래스모피즘 효과 */
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 0 0 20px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btns_menu {
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* margin 대신 gap 사용이 더 깔끔함 */
+}
+
+/* 5. 버튼 스타일 (기본: 투명+스트록 / 호버: 화이트 채우기) */
+.btns_menu .btn {
+    font-size: 20px;
+    font-weight: 500;
+    color: #ffffff;
+    width: 130px;
+    height: 40px;
+    border-radius: 20px;
+    cursor: pointer;
+    background-color: transparent; 
+    border: 1px solid #ffffff; 
+    outline: none;
+    /* 부드러운 전환 효과 */
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.btns_menu .btn:hover {
+    background-color: #ffffff;
+    color: #44a8cf; 
+}
+
+/* 6. Top 버튼 (Arrow Up) */
+/* ==========================================================================
+   Top 버튼 - 스크롤 연동형 SVG 하늘색 링 가두기 스타일
+   ========================================================================== */
+
+.arrow-up {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px !important;  /* 크기 고정 */
+    height: 60px !important;
+    border-radius: 50%;
+    border: none !important; /* 기존 흰색/실선 테두리 강제 제거 */
+    background-color: #3b3a5a !important; /* 캡처본의 다크 네이비 배경색 적용 */
+    display: none; /* 기본 숨김 (HTML 밑에 정의된 스크립트 .show 클래스로 제어됨) */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 9999;
+    padding: 0 !important;
+    overflow: visible; /* 테두리 선이 깔끔하게 보이도록 */
+}
+
+/* 스크롤 시 나타나는 페이드 인 액션 유지 */
+.arrow-up.show {
+    display: flex !important;
+}
+
+/* 2. SVG 그래픽 트랙을 버튼 크기에 100% 딱 맞추고 12시 방향으로 회전시킴 */
+.progress-circle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg); /* 12시 정각부터 차오르도록 회전 */
+    z-index: 1;
+    pointer-events: none; /* 클릭 방해 금지 */
+}
+
+/* 3. 실제 스크롤 값에 맞춰 차오를 원형 선 디자인 */
+.progress-circle circle {
+    fill: none;
+    stroke: #00bfff; /* 영롱한 하늘색 게이지 */
+    stroke-width: 5; /* 굵기 세팅 (약 2px 체감) */
+    stroke-dasharray: 289; /* 반지름 46짜리 원의 총 둘레 (2 * pi * 46) */
+    stroke-dashoffset: 289; /* 첫 시작은 게이지 0% (완전 비어있음) */
+    transition: stroke-dashoffset 0.1s linear;
+}
+
+/* 4. 구글 화살표 아이콘 레이어를 링 위로 올리고 색상 화이트로 고정 */
+.arrow-up .material-symbols-outlined {
+    position: relative;
+    z-index: 2;
+    color: #ffffff !important;
+    font-size: 28px !important; /* 아이콘 크기 살짝 키움 */
+}
+
+/* 마우스 호버 시 인터랙션 */
+.arrow-up:hover {
+    transform: scale(1.08);
+    transition: transform 0.2s ease;
+}
+
+
+
+
+.about-container {
+    display: flex;
+    align-items: center; /* 위쪽 정렬(flex-start) 대신 중앙 정렬로 변경 */
+    gap: 80px; /* 사진과 글 사이 간격을 확 넓히세요 */
+    padding: 100px 0;
+}
+
+.about-photo {
+    flex: 0 0 40%; /* 30%에서 40%로 상향 조정 */
+}
+
+.about-photo img {
+    width: 65%;
+    height: auto; /* 높이 고정보다는 가로 비율에 맞게 */
+    aspect-ratio: 4 / 5; /* 약간 세로형으로 비율 고정 */
+    object-fit: cover;
+    margin-left: 10vh;
+    border-radius: 25px;
+}
+
+.about-info {
+    flex: 1;
+    text-align: left;
+    margin-left: 25px;
+    color: #c9c9ff; 
+    border-left: #a0a0c0 1px solid; /* 왼쪽에 얇은 선 추가 */
+    padding-left: 55px; /* 선과 텍스트 사이 간격 */
+}
+
+.about-info h1 {
+    color: #eee;
+    font-size: 80px;
+    margin-bottom: 60px;
+    margin-top: -25px;
+}
+
+
+
+/* --- About Me 슬라이드 등장 효과 추가 --- */
+
+/* 1. 초기 상태: 투명하고 옆으로 밀려남 */
+#about .about-photo,
+#about .about-info {
+    opacity: 0;
+    transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* 아래 내용이 있는지 확인! */
+}
+
+#about .about-info {
+    opacity: 0;
+    transform: translateX(100px); /* 오른쪽에서 대기 */
+    transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition-delay: 0.2s; /* 텍스트가 약간 늦게 나오면 더 고급스러움 */
+}
+
+
+/* 왼쪽/오른쪽으로 다시 돌아가는 효과 */
+#about .about-photo { transform: translateX(-100px); }
+#about .about-info { transform: translateX(100px); }
+
+/* 2. 활성화 상태: 제자리로 모임 (JS에서 클래스 부여 예정) */
+/* 활성화되었을 때 */
+#about.active .about-photo,
+#about.active .about-info {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* 3. (선택사항) 홈 화면 고정 방식 보정 */
+/* 기존 CSS에 sticky와 fixed가 섞여있다면 하나로 통일하는 게 좋습니다. */
+#home {
+    position: sticky !important; 
+    top: 0;
+}
+
+
+
+
+/* 정보 리스트 스타일 */
+.info-item {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.info-item strong {
+    display: inline-block;
+    width: 100px; /* 항목 이름 너비 통일 */
+    color: #e3e3ff; /* 항목 이름 강조 색상 */
+}
+
+/* 학력, 자격증 등 하단 그룹 */
+.detail-group {
+    margin-top: 25px;
+}
+
+.detail-group h3 {
+    font-size: 35px;
+    border-bottom: 2px solid #bcbcda;
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #c6c6f1;
+    padding-bottom: 5px
+}
+
+.detail-group p {
+    margin: 5px 0;
+    color: #c7c7e4;
+}
+
+
+
+
+/* Skill 섹션 전체 레이아웃 */
+#skill .skill-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 중앙 정렬 */
+    gap: 50px;
+    margin-top: 30px;
+}
+
+#skill h1 {
+    font-size: 80px;
+    color: #ffffff;
+    margin-top: -20px;
+    margin-bottom: 35px;
+}
+
+/* 툴 아이콘 그리드 */
+.tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 30px;
+    width: 100%;
+    max-width: 800px; /* 너무 퍼지지 않게 제한 */
+}
+
+.skill-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+/* .skill-item:hover {
+    transform: translateY(-5px); /* 살짝 올라가는 효과 *
+}
+
+.skill-icon img {
+    width: 50px; 
+    height: 50px;
+    object-fit: contain;
+    margin-bottom: 10px;
+} */
+
+
+/* 1. 기본 상태: 트랜지션 설정 */
+.skill-icon img {
+    width: 50px; 
+    height: 50px;
+    object-fit: contain;
+    margin-bottom: 10px;
+    
+    /* 부드러운 확대를 위한 설정 */
+    transition: transform 0.3s ease; 
+}
+
+/* 2. 호버 상태: 아이콘만 1.2배 확대 */
+.skill-item:hover .skill-icon img {
+    transform: scale(1.2); /* 1.1~1.2 정도가 적당히 눈에 띄고 예뻐요 */
+}
+
+/* 3. (참고) 만약 이전에 넣었던 전체 박스 이동 효과가 있다면 삭제하거나 주석 처리하세요 */
+/* .skill-item:hover {
+    transform: translateY(-5px); 
+} 
+*/
+
+.skill-name {
+    font-size: 20px;
+    color: #f2f2ff;
+    /* margin-top: 5px; */
+    margin-bottom: 10px;
+}
+
+
+/* 점수판 컨테이너 */
+.skill-rating {
+    display: flex;
+    gap: 6px; /* 원 사이 간격 */
+    margin-bottom: 5px;
+}
+
+.skill-score {
+    font-size: 20px;
+    color: #c4c4ff;
+    margin-top: 5px;
+}
+
+/* 기본 원 스타일 (비어있는 상태) */
+.circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%; /* 완전한 원으로 만들기 */
+    
+    /* [스트록 설정] */
+    border: 1.5px solid #b4b4ca; 
+    
+    background-color: transparent; /* 배경은 투명하게 */
+    box-sizing: border-box; /* 테두리가 크기에 포함되도록 */
+}
+
+/* 채워진 원 스타일 */
+.circle.filled {
+    /* [백그라운드 컬러 채우기] */
+    background-color: #dadaff;
+}
+
+
+
+/* 자격증 리스트 스타일 */
+.license-container {
+    width: 100%;
+    min-width: 320px; /* 너비를 살짝 키워 여백 확보 */
+    background: rgba(255, 255, 255, 0.1); /* 배경이 어두우니 불투명도 조절 */
+    padding: 40px 50px; /* 상하 40, 좌우 50으로 넉넉하게 */
+    padding-left: 40px !important; /* 왼쪽 여백 더 확보 */
+    border-radius: 25px; /* 둥근 정도를 키우면 더 부드러워요 */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+/* 자격증 박스 내부의 타이틀 스타일 */
+.license-container h3 {
+    font-size: 28px;        /* 폰트 크기 키움 */
+    color: #dadaff;         /* About Me의 강조색과 통일 (혹은 원하는 색상) */
+    font-weight: 700;       /* 좀 더 두껍게 강조 */
+    margin-top: 0;          /* 박스 상단 여백 제거 (더 위로 붙게 함) */
+    margin-bottom: 30px;    /* 제목과 리스트 사이 간격 확보 */
+    letter-spacing: 1px;    /* 자간을 살짝 벌려 고급스럽게 */
+    text-align: left;       /* 왼쪽 정렬 */
+    
+    /* 선택 사항: 제목 아래에 얇은 선 추가 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+}
+
+
+.license-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+.license-container li {
+    font-size: 18px;
+    margin-bottom: 15px; /* 리스트 간격도 살짝 늘려주세요 */
+    padding-left: 30px; /* 체크 표시가 들어갈 공간 확보 */
+    position: relative;
+    color: #eee; /* 배경색에 맞춰 텍스트 색상 조절 */
+    font-size: 18px;
+}
+
+.license-container li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #dadaff;
+}
+
+
+
+
+/* Skill 섹션 레이아웃: 좌우 배치 */
+#skill .skill-container {
+    display: flex;
+    flex-direction: row; /* 가로로 배치 */
+    justify-content: space-between; /* 양 끝으로 밀기 */
+    align-items: flex-start; /* 위쪽 정렬 */
+    gap: 60px; /* 좌우 간격 */
+    margin-top: 80px;
+    text-align: left; /* 왼쪽 정렬로 변경 */
+}
+
+/* 왼쪽 스킬 박스 */
+.skill_Left {
+    flex: 2; /* 왼쪽 공간을 더 많이 차지 */
+    border-right: #a0a0c0 1px solid; /* 오른쪽에 얇은 선 추가 */
+    padding-right: 50px; /* 선과 내용 사이 간격 */
+}
+
+/* 스킬 아이템들을 가로로 정렬하는 그리드 */
+.skill-grid {
+    display: grid;
+    /* 한 줄에 3개씩 배치 (공간에 따라 자동 조절) */
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 40px 20px; /* 위아래 40px, 좌우 20px 간격 */
+}
+
+/* 오른쪽 자격증 박스 */
+.skill_Right {
+    flex: 1; /* 오른쪽은 적당한 너비 유지 */
+    position: sticky; /* 스크롤 시 따라오게 하고 싶다면 추가 (선택사항) */
+    top: 100px;
+}
+
+/* 스킬 아이템 개별 스타일 유지 */
+.skill-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 아이콘과 텍스트 중앙 정렬 */
+    text-align: center;
+}
+
+.skill-icon img {
+    width: 80px; 
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 10px;
+    transition: transform 0.3s ease; 
+}
+
+/* 자격증 컨테이너 너비 보정 */
+.license-container {
+    padding-left: 20px;
+    width: 80%;
+    min-width: 240px; /* 너무 좁아지지 않게 */
+}
+
+
+
+
+
+
+#works {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden; /* scale로 커진 부분을 여기서 잘라줌 */
+}
+
+/* #works 아이디 안에 있는 h1을 특정해서 변경 */
+#works h1 {
+    color: #ffffff !important; /* 다른 h1 설정보다 우선 적용 */
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3); /* 배경이 밝아질 때를 대비한 약간의 그림자 (선택) */
+    font-size: 100px;
+}
+
+.works-bg1 {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%; /* 다시 100%로 수정 */
+    background-image: url('images/main-wallpaper1.jpg') !important;
+    background-size: cover;
+    background-position: center;
+    filter: blur(20px) brightness(0.6);
+    
+    /* 핵심: 블러의 뭉개진 모서리를 화면 밖으로 밀어내기 */
+    transform: scale(1.1); 
+    
+    transition: background-image 0.6s ease-in-out;
+    z-index: -1;
+}
+
+
+
+/* 슬라이더가 옆으로 무한히 가도록 하는 애니메이션 */
+.slider-track {
+    display: flex;
+    gap: 45px; /* 카드 사이 간격도 좀 더 넓게 */
+    width: max-content;
+    animation: infiniteScroll 20s linear infinite;
+}
+
+.slider-track:hover {
+    animation-play-state: paused; /* 마우스 올리면 정지 */
+}
+
+@keyframes infiniteScroll {
+    /* 시작할 때 이미 왼쪽으로 한 카드 정도 밀려있는 상태로 설정 */
+    0% { transform: translateX(-150px); } 
+    100% { transform: translateX(calc(-50% - 150px)); } 
+}
+
+
+.project-card {
+    /* 기존 스타일들... */
+    width: 600px; 
+    height: 450px;
+    border-radius: 50px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+
+    /* 핵심: 트랜스폼(크기, 위치 변경)만 0.4초 동안 부드럽게 */
+    transition: transform 0.4s ease-out; 
+}
+
+.project-card:hover {
+    /* 위로 15px 들리면서 1.03배 커짐 */
+    transform: translateY(-15px) scale(1.03);
+    z-index: 10; /* 옆 카드보다 위로 올라오게 설정 */
+}
+
+.card-info h3 {
+    font-size: 40px;
+    color: #d6d6f4;
+    margin-top: 20px;
+    font-weight: 500;
+}
+
+
+
+
+
+/* 제목과 아이템들 사이 간격 */
+.contact-detail h1 {
+    margin-bottom: 80px; /* 제목 아래 여백 확보 */
+}
+
+/* 핵심: 가로 배치 설정 */
+.contact-grid {
+    display: flex;
+    justify-content: center; /* 가운데로 모음 */
+    align-items: flex-start;
+    gap: 100px; /* 아이템 사이의 넓은 간격 */
+    width: 100%;
+}
+
+/* 개별 아이템 스타일 */
+.con-con {
+    flex: 1; /* 동일한 너비 공유 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.con-con img {
+    width: 110px; /* 크기를 살짝 키웠습니다 */
+    height: 110px;
+    object-fit: contain;
+    margin-bottom: 20px; /* 이미지와 제목 사이 간격 */
+    transition: transform 0.3s ease;
+}
+
+/* 호버 시 아이콘 살짝 흔들리거나 커지는 효과 (선택사항) */
+.con-con:hover img {
+    transform: scale(1.1);
+}
+
+.con-con h2 {
+    font-size: 28px;
+    color: #ffffff;
+    margin-bottom: 1px;
+}
+
+.con-con h3 {
+    font-size: 23px;
+    color: #d6d6f4; /* Works 카드 텍스트와 통일감 */
+    font-weight: 300;
+}
+
+
+
+
+
+
+
+#home {
+    width: 100%;
+    height: 100vh;
+    /* 배경 이미지 설정 */
+    background-image: url('images/main-wallpaper1.jpg'); /* 본인의 이미지 경로와 파일명으로 수정하세요 */
+    background-size: cover;      /* 이미지가 화면을 빈틈없이 채우도록 설정 */
+    background-position: center; /* 이미지가 항상 정중앙에 오도록 설정 */
+    background-attachment: fixed; /* (선택) 스크롤할 때 배경은 고정되어 고급스러운 느낌을 줌 */
+    
+    /* 배경 위에 반투명 검은색 덮개 씌우기 (글자 가독성 확보) */
+    background-blend-mode: darken;
+    background-color: rgba(0, 0, 0, 0.4); /* 0.4를 조절해 어둡기를 결정하세요 */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+
+
+    position: relative; /* 캔버스 배치를 위해 추가 */
+    overflow: hidden;
+}
+
+
+
+
+#canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* 마우스 클릭이 아래 버튼이나 텍스트에 전달되도록 설정 */
+    z-index: 1; /* 배경보다는 위 */
+}
+
+#home .title {
+    position: relative;
+    z-index: 2; /* 캔버스보다 위로 올림 */
+}
+
+
+
+
+/* 파일 맨 아래 추가/수정 */
+#about, #skill, #works, #contact {
+    position: relative;
+    z-index: 10;           /* 홈(z-index 1)보다 높은 숫자로 설정 */
+    background-color: #1b1b36; /* 투명하면 안됨! 확실히 배경색 지정 */
+    width: 100%;
+}
+
+/* 색상을 교차로 주면 섹션 구분이 잘 됩니다 */
+#skill { background-color: #4b4966; } 
+#contact { background-color: #4b4966; }
+
+
+
+
+
+
+/* 모달 전체 배경 (오버레이) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* 50%보다 조금 더 진한 70%가 가독성에 좋습니다 */
+    display: none; /* 기본은 숨김 */
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* 인트로 레이어만큼 높게 */
+    backdrop-filter: blur(5px); /* 배경 살짝 흐리게 */
+}
+
+/* 모달이 켜졌을 때 클래스 */
+.modal-overlay.active {
+    display: flex;
+}
+
+/* 모달 본체 */
+.modal-content {
+    /* 1. 배경색 수정: #1b1b36 색상을 RGBA로 변환하고 오퍼시티 0.8(80%) 적용 */
+    background-color: rgba(27, 27, 54, 0.3); 
+    
+    /* 2. 블러 효과 추가: 배경을 흐리게 만듦 (10~15px 정도가 적당합니다) */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px); /* 사파리 브라우저 호환성 */
+
+    /* 3. (선택사항) 입체감을 위한 아주 얇은 테두리 추가 */
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+
+    /* --- 기존 스타일 유지 --- */
+    width: 80%;
+    max-width: 1000px;
+    height: 70vh;
+    border-radius: 30px;
+    position: relative;
+    padding: 50px;
+    display: flex;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    overflow: hidden;
+    animation: modalFadeUp 0.5s ease-out;
+}
+
+@keyframes modalFadeUp {
+    from { opacity: 0; transform: translateY(50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 닫기 버튼 */
+.modal-close {
+    position: absolute;
+    top: 25px;
+    right: 30px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 40px;
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.3s ease;
+}
+
+.modal-close:hover {
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    display: flex;
+    gap: 40px;
+    width: 100%;
+}
+
+
+/* 이미지 슬라이더 버튼 */
+.modal-left { position: relative; overflow: hidden; }
+.slide-btns {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+}
+.slide-btns button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none; color: white; padding: 8px 15px;
+    border-radius: 10px; cursor: pointer; backdrop-filter: blur(5px);
+}
+
+/* 컬러 팔레트와 코드 텍스트 */
+.color-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px; /* 원과 글자 사이 간격 */
+}
+
+/* 색상 코드 텍스트 */
+.color-code {
+    font-size: 10px;
+    color: #a6a9ba; /* 흰색으로 확실히 지정 */
+    font-weight: 300;
+    font-family: 'Pretendard', sans-serif;
+    letter-spacing: 0.7px;
+}
+
+
+/* .modal-left {
+    flex: 1.2;
+} */
+
+.modal-left img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+.modal-right {
+    flex: 1;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.modal-right h2 {
+    font-size: 40px;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.modal-right p {
+    color: #c7c7e4;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+/* 컬러 팔레트 */
+.color-palette {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.color-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+
+
+
+
+
+/* ==========================================================================
+   About Me 섹션 - 무한 반복 자동문 완벽 강제 버전 (기존 코드 완전 보존)
+   ========================================================================== */
+
+/* 1. 기본 상태 및 나갈 때 (active 클래스가 없을 때 확실하게 바깥으로 밀어내기) */
+#about .about-photo,
+#about:not(.active) .about-photo {
+    opacity: 0 !important;
+    transform: translateX(-150px) !important; /* 나갈 때 더 확실하게 밖으로 */
+    transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+#about .about-info,
+#about:not(.active) .about-info {
+    opacity: 0 !important;
+    transform: translateX(150px) !important;  /* 나갈 때 더 확실하게 밖으로 */
+    transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    transition-delay: 0s !important; /* 나갈 때는 딜레이 없이 즉시 닫힘 */
+}
+
+/* 2. 스크롤이 도달하여 화면에 들어왔을 때 (active 클래스가 붙으면 무조건 중앙 0으로) */
+#about.active .about-photo {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+}
+
+#about.active .about-info {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+    transition-delay: 0.2s !important; /* 들어올 때만 글자가 0.2초 늦게 열림 */
+}
+
+
+
+
+
+
+/* ==========================================================================
+   Skill 섹션 - 자동문 + 자격증 리스트 순차 등장 (최종 완성본)
+   ========================================================================== */
+
+/* 1. 제목 - 느린 낙하 + 오퍼시티 등장 */
+#skill h1 {
+    opacity: 0;
+    transform: translateY(-50px);
+    transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+#skill.active h1 {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 2. 큰 상자들 - 양방향 자동문 (초록색 영역) */
+.skill_Left, .skill_Right {
+    opacity: 0;
+    transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+/* [닫힘] 화면에서 벗어났을 때 */
+#skill:not(.active) .skill_Left  { transform: translateX(-150px); }
+#skill:not(.active) .skill_Right { transform: translateX(150px); transition-delay: 0s !important; }
+
+/* [열림] 화면에 들어왔을 때 */
+#skill.active .skill_Left,
+#skill.active .skill_Right {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+
+/* ==========================================================================
+   ★ [추가 디테일] 자격증 목록 한 줄씩 순차적으로 등장하는 로직
+   ========================================================================== */
+
+/* [기본 상태] 자격증 리스트의 각 줄을 투명하게 만들고 아래로 살짝 내려둠 */
+.skill_Right li, 
+.skill_Right .cert-item, /* li가 아니라 div 등으로 짜여있을 경우를 대비한 상호작용 예외처리 */
+.skill_Right p { 
+    opacity: 0;
+    transform: translateY(15px);
+    /* 부드럽고 빠르게 등장하도록 속도 세팅 (0.4초) */
+    transition: opacity 0.4s ease, transform 0.4s ease; 
+}
+
+/* [닫힘] 스크롤을 벗어나면 지체 없이 투명화 (리셋) */
+#skill:not(.active) .skill_Right li,
+#skill:not(.active) .skill_Right .cert-item,
+#skill:not(.active) .skill_Right p {
+    opacity: 0;
+    transform: translateY(15px);
+    transition-delay: 0s !important;
+}
+
+/* [열림] 상자가 도착하는 시간(1.2초) 이후부터 한 줄씩 시차(Delay) 등장! */
+/* 1번째 줄 */
+#skill.active .skill_Right li:nth-of-type(1),
+#skill.active .skill_Right p:nth-of-type(1) { transition-delay: 1.1s; opacity: 1; transform: translateY(0); }
+
+/* 2번째 줄 */
+#skill.active .skill_Right li:nth-of-type(2),
+#skill.active .skill_Right p:nth-of-type(2) { transition-delay: 1.25s; opacity: 1; transform: translateY(0); }
+
+/* 3번째 줄 */
+#skill.active .skill_Right li:nth-of-type(3),
+#skill.active .skill_Right p:nth-of-type(3) { transition-delay: 1.4s; opacity: 1; transform: translateY(0); }
+
+/* 4번째 줄 */
+#skill.active .skill_Right li:nth-of-type(4),
+#skill.active .skill_Right p:nth-of-type(4) { transition-delay: 1.55s; opacity: 1; transform: translateY(0); }
+
+/* 5번째 줄 (1종 보통) */
+#skill.active .skill_Right li:nth-of-type(5),
+#skill.active .skill_Right p:nth-of-type(5) { transition-delay: 1.7s; opacity: 1; transform: translateY(0); }
+
+
+
+
+
+
+
+/* ==========================================================================
+   Works 섹션 - 이중 레이어 등장 및 퇴장 인터랙션 (텍스트 초간단 버젼)
+   ========================================================================== */
+
+/* 1. 제목 - 위에서 아래로 천천히 내려오며 오퍼시티 등장 (노란색 영역) */
+#works h1,
+#works .title { /* 기존 제목 클래스명에 맞춰 상호작용 예외처리 */
+    opacity: 0;
+    transform: translateY(-50px); /* 위에서 대기 */
+    transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+/* 2. 카드 컨테이너 - 아래에서 위로 솟아오르며 오퍼시티 등장 (보라색 영역) */
+/* 흐르는 애니메이션이 끊기지 않도록, 카드가 아니라 카드를 감싸는 '부모 박스'를 움직입니다. */
+#works .slider-container,
+#works .wrapper,
+#works .canvas-wrapper { /* 프로젝트 구조에 맞춰 컨테이너 타겟팅 */
+    opacity: 0;
+    transform: translateY(80px); /* 아래에서 대기 */
+    transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+
+/* ==========================================================================
+   [열림 / 등장] 50% 구간에 들어왔을 때 (.active)
+   ========================================================================== */
+#works.active h1,
+#works.active .title,
+#works.active .slider-container,
+#works.active .wrapper,
+#works.active .canvas-wrapper {
+    opacity: 1 !important;
+    transform: translateY(0) !important; /* 제자리로 복귀 */
+}
+
+
+/* ==========================================================================
+   [닫힘 / 퇴장] 50% 구간을 벗어났을 때 (다시 사라짐)
+   ========================================================================== */
+#works:not(.active) h1,
+#works:not(.active) .title {
+    opacity: 0 !important;
+    transform: translateY(-50px) !important;
+    transition-delay: 0s !important;
+}
+
+#works:not(.active) .slider-container,
+#works:not(.active) .wrapper,
+#works:not(.active) .canvas-wrapper {
+    opacity: 0 !important;
+    transform: translateY(80px) !important;
+    transition-delay: 0s !important; /* 나갈 때는 지체 없이 즉시 리셋 */
+}
+
+
+
+
+
+/* ==========================================================================
+   Contact 섹션 - 타이틀 선하강 후 카드 3종 정밀 순차 등장 (완성본)
+   ========================================================================== */
+
+/* 1. 타이틀 (초록색 영역) - 위에서 아래로 1.0초 동안 천천히 내려오며 등장 */
+#contact h1 {
+    opacity: 0;
+    transform: translateY(-50px);
+    transition: transform 1.0s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 1.0s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+#contact.active h1 {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* 2. 연락처 카드 3개 (파란색 영역) - 기본 숨김 상태 (아래에서 위로 등장 대기) */
+#contact .con-con {
+    opacity: 0;
+    transform: translateY(50px); /* 아래에서 대기 */
+    /* 카드가 위로 숑- 올라올 때의 부드러운 속도 세팅 (0.5초) */
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+
+/* ==========================================================================
+   [열림 / 등장] 50% 구간 도달 시 - 오수한 님 지정 황금 박자 타이밍
+   ========================================================================== */
+
+/* [1번] 제목 등장 (0초에 시작해서 1.0초에 끝남) */
+#contact.active h1 {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* [2번] 왼쪽 Phone: 제목 등장 시작 기준 0.6초 뒤에 아래에서 위로 슥 등장 */
+#contact.active .con-con:nth-child(1) {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.6s !important; 
+}
+
+/* [3번] 중앙 Email: 2번(0.6초)으로부터 0.3초 뒤인 0.9초에 등장 */
+#contact.active .con-con:nth-child(2) {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.9s !important; 
+}
+
+/* [4번] 오른쪽 Instagram: 3번(0.9초)으로부터 0.3초 뒤인 1.2초에 등장 */
+#contact.active .con-con:nth-child(3) {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 1.2s !important; 
+}
+
+
+/* ==========================================================================
+   [닫힘 / 퇴장] 50% 구간을 벗어났을 때 (즉시 리셋)
+   ========================================================================== */
+#works:not(.active) h1, /* 혹시 모를 예외처리 */
+#contact:not(.active) h1 {
+    opacity: 0 !important;
+    transform: translateY(-50px) !important;
+    transition-delay: 0s !important;
+}
+
+#contact:not(.active) .con-con {
+    opacity: 0 !important;
+    transform: translateY(50px) !important;
+    transition-delay: 0s !important; /* 나갈 때는 박자 없이 즉시 숨김 */
+}
+
+
+
+
+
+
+
+/* ==========================================================================
+   Top 버튼 - 스크롤 연동 하늘색 테두리 게이지 스택
+   ========================================================================== */
+
+/* 기존에 혹시 .top-btn 스타일이 이미 위에 지정되어 있다면, 
+   그 아래에 이 속성들을 덮어씌우거나 통합해주셔도 됩니다. */
+.top-btn, #top-btn, .scroll-top {
+    /* [필수] 처음에 흰색 테두리로 시작해서 스크롤에 따라 하늘색으로 채워질 배경 */
+    background: conic-gradient(#00bfff 0%, #ffffff 0%); 
+    
+    /* 캡처본 디자인 유지를 위한 기본 플렉스 정렬 */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: fixed;
+    border-radius: 50%;
+    
+    /* 가짜 영역이 삐져나가지 않도록 숨김 처리 */
+    overflow: hidden; 
+}
+
+/* 안쪽 원 메우기 (가운데를 어두운 배경색으로 채워 2px 두께의 테두리 효과를 만듭니다) */
+.top-btn::before, #top-btn::before, .scroll-top::before {
+    content: '';
+    position: absolute;
+    
+    /* 기존 버튼 크기가 만약 50px이라면 46px로, 60px이라면 56px로 자동 조절되도록 세팅 */
+    width: calc(100% - 4px);  /* 양쪽 2px씩 총 4px을 빼서 2px 테두리 확보 */
+    height: calc(100% - 4px);
+    border-radius: 50%;
+    
+    /* ★ 중요: 캡처본(image_eea0af.png)의 짙은 네이비 배경색과 똑같이 맞춰 메웁니다 */
+    background-color: #3b3a5a !important; 
+    z-index: 1;
+}
+
+/* 안쪽의 위쪽 화살표 (↑) 아이콘 레이어 순위 올려주기 */
+.top-btn i, .top-btn svg, .top-btn img,
+#top-btn i, #top-btn svg, #top-btn img,
+.scroll-top i, .scroll-top svg, .scroll-top img {
+    position: relative !important;
+    z-index: 2 !important;
+    color: #ffffff !important;
+}
