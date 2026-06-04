@@ -3,20 +3,157 @@
 
 
 
-/* 1. 인트로 레이어 전체 설정 */
+/* ==========================================================================
+    [추가] Welcome 텍스트 입자 합침 & 반짝임 애니메이션
+   ========================================================================== */
+.welcome-text.animate {
+    animation: particleMerge 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes particleMerge {
+    0% {
+        opacity: 0;
+        /* 글자 입자들이 양옆으로 멀리 흩어져 있고, 흐릿한 상태 */
+        letter-spacing: 40px;
+        filter: blur(12px);
+        text-shadow: 0 0 100px rgba(255, 255, 255, 0);
+    }
+    60% {
+        opacity: 0.8;
+        /* 글자가 중심으로 모이면서 블러가 살짝 걷힘 */
+        filter: blur(4px);
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+    }
+    75% {
+        opacity: 1;
+        /* 자간이 정상으로 오면서 한 번 강하게 번쩍(Super Glow) */
+        letter-spacing: 4px;
+        filter: blur(0px);
+        text-shadow: 0 0 50px rgba(255, 255, 255, 1), 
+                    0 0 20px rgba(255, 255, 255, 0.6);
+    }
+    100% {
+        opacity: 1;
+        letter-spacing: 4px;
+        filter: blur(0px);
+        /* 번쩍인 후 은은한 빛 잔상만 남김 */
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+}
+
+
+/* ==========================================================================
+    [교정] 은하수 우주 콘셉트 - 완벽한 좌측 정렬 및 순차 등장 시스템
+   ========================================================================== */
+.title {
+    opacity: 1;
+    /* 원본 레이아웃의 왼쪽 정렬 설정을 완벽하게 유지합니다 */
+    text-align: left !important;
+}
+
+/* 타이틀 내부의 개별 글자(span)들의 초기 숨김 상태 */
+.title span {
+    display: inline-block;
+    opacity: 0;
+    filter: blur(12px) brightness(0.5);
+    transform: scale(1.1); 
+    
+    /* [정밀 교정] 공백 노드 정렬 방식을 변경하여 왼쪽 세로 라인이 칼처럼 딱 맞아떨어집니다 */
+    vertical-align: baseline;
+}
+
+/* 필터가 다 걷혔을 때 애니메이션 작동 */
+.title.show span {
+    /* 기존 2.2초에서 조금 더 밀도감 있게 1.5초로 세팅하여 리드미컬하게 켜집니다 */
+    animation: galaxyLetterFadeIn 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes galaxyLetterFadeIn {
+    0% {
+        opacity: 0;
+        filter: blur(12px) brightness(0.2);
+        transform: scale(1.2);
+        text-shadow: 0 0 40px rgba(0, 212, 255, 0);
+    }
+    40% {
+        opacity: 0.7;
+        filter: blur(4px) brightness(1.5);
+        transform: scale(1.03);
+        /* 은하수 푸른빛과 신비로운 보랏빛 광채가 폭발하듯 번쩍임 */
+        text-shadow: 0 0 20px #00d4ff, 
+                    0 0 40px #7000ff, 
+                    0 0 60px #00d4ff;
+    }
+    70% {
+        opacity: 1;
+        filter: blur(0px) brightness(1.2);
+        transform: scale(0.99);
+        /* 순백의 별빛 레이어가 겹치며 화려하게 도달하는 정점 */
+        text-shadow: 0 0 15px #fff, 
+                    0 0 30px #00d4ff, 
+                    0 0 50px #7000ff;
+    }
+    100% {
+        opacity: 1;
+        filter: blur(0px) brightness(1);
+        transform: scale(1);
+        /* 등장 완료 후 원본 폰트 고유의 컬러로 깨끗하게 안착 */
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
+    }
+}
+
+
+/* ==========================================================================
+    1. [교정] 인트로 레이어 고정 및 공백 제거 설정
+   ========================================================================== */
+#intro-wrapper {
+    position: relative;
+    width: 100%;
+    /* [교정] 빈 블록을 형성하던 높이 값을 없애고, 하단 섹션들과 겹치지 않게 처리 */
+    height: auto; 
+    margin: 0;
+    padding: 0;
+}
+
 #intro-layer {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background-color: #000;
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999; /* 모든 요소보다 위에 */
-    transition: opacity 1.5s ease; /* 검은 화면 사라지는 속도 */
+    /* [교정] z-index를 최상위로 두어, 처음에는 무조건 검은 필터와 Welcome만 보이게 합니다 */
+    z-index: 10000; 
+    transition: none; 
+    pointer-events: auto; 
 }
+
+/* [교정] 77행 근처 수정 - #home을 처음부터 화면 전체에 고정 */
+#home {
+    position: fixed !important; /* [교정] 휠을 돌리는 동안 강제로 화면에 붙박이 고정 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1; /* 별들과 타이틀은 검은 필터(z-index: 10000) 바로 아래에 항상 존재함 */
+    overflow: hidden;
+    margin: 0;
+}
+
+/* [교정] 인트로 고정이 풀린 후 자연스럽게 밀고 올라올 #about 섹션 설정 */
+#about {
+    position: relative;
+    z-index: 2; 
+    background-color: #1b1b36; 
+    /* [교정] #home이 fixed 상태이므로, 첫 스크롤 시 #home 바로 뒤에 이어지도록 마진 탑 부여 */
+    margin-top: 100vh; 
+}
+
+
+
 
 /* 2. Welcome 글자 스타일 및 애니메이션 */
 .welcome-text {
@@ -24,16 +161,17 @@
     font-size: 80px;
     font-weight: 200;
     letter-spacing: 10px;
-    opacity: 0;
-    animation: welcomeFade 3s forwards; /* 3초 동안 나타났다 사라짐 */
+    opacity: 1;
+
+    transition: opacity 0.05s linear;
 }
 
-@keyframes welcomeFade {
+/* @keyframes welcomeFade {
     0% { opacity: 0; transform: translateY(20px); }
     40% { opacity: 1; transform: translateY(0); }
     70% { opacity: 1; }
     100% { opacity: 0; }
-}
+} */
 
 /* 3. 메인 화면 초기 상태 (흐림) */
 #home {
@@ -52,7 +190,8 @@
 /* 1. 홈 섹션은 고정되어 있되, 다른 섹션이 위로 올라오게 설정 */
 /* 77행 근처 수정 */
 #home {
-    position: relative; /* sticky -> relative로 변경 */
+    position: sticky !important; /* 스크롤할 동안 화면에 고정 */
+    top: 0;
     width: 100%;
     height: 100vh;
     z-index: 1; 
@@ -79,19 +218,21 @@
     opacity: 0.7; /* 0.5~0.8 사이에서 어두움 정도 조절 */
 }
 
-/* About 섹션 설정 */
+/* #about 섹션이 올라올 때 #home 위를 자연스럽게 덮도록 보장 */
 #about {
     position: relative;
-    z-index: 2; /* 홈보다 위에 위치 */
-    background-color: #1b1b36; /* 배경색이 있어야 아래 홈을 가림 */
-    box-shadow: 0 -20px 50px rgba(0,0,0,0.5); /* 올라올 때 입체감을 위해 그림자 추가 */
+    z-index: 2; 
+    background-color: #1b1b36; 
 }
 
 
 
 
 
-
+/* 인트로가 끝날 때까지 body 스크롤 잠금 */
+body.intro-lock {
+    overflow: hidden;
+}
 
 
 body { 
@@ -100,6 +241,7 @@ body {
     /* 섹션이 많아질 것이므로 고정 높이보다는 최소 높이 권장 */
     min-height: 2000px; 
     background-color: rgb(58, 53, 87);
+    overflow-x: hidden;
 }
 
 
@@ -228,9 +370,37 @@ h3 {
     color: #44a8cf; 
 }
 
+
+/* ==========================================================================
+    [교정] 상단 메뉴 버튼 초기 숨김 및 등장 설정
+   ========================================================================== */
+.btns {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* 버튼들을 감싸고 있는 내비게이션 바 전체의 높이를 z-index 최상위권으로 설정 */
+    z-index: 999; 
+    
+    /* [핵심] 처음에는 위로 100% 올려서 화면 밖으로 완벽히 숨김 */
+    transform: translateY(-100%);
+    opacity: 0;
+    
+    /* 아래로 내려올 때 0.8초 동안 부드럽게 움직이도록 설정 */
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s ease;
+}
+
+/* [추가] 필터가 다 걷혔을 때 JS를 통해 붙여줄 활성화 클래스 */
+.btns.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+
+
 /* 6. Top 버튼 (Arrow Up) */
 /* ==========================================================================
-   Top 버튼 - 스크롤 연동형 SVG 하늘색 링 가두기 스타일
+    Top 버튼 - 스크롤 연동형 SVG 하늘색 링 가두기 스타일
    ========================================================================== */
 
 .arrow-up {
