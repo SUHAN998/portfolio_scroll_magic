@@ -1,23 +1,147 @@
 // ==========================================================================
-// 1. 인트로 시퀀스 및 메인화면 선명도 조절
+// 1. [완성형] 부제목 -> 대제목 순차 등장 및 구조 절대 보존 인트로 시스템
 // ==========================================================================
-window.addEventListener('DOMContentLoaded', () => {
-    const introLayer = document.getElementById('intro-layer');
-    const homeSection = document.getElementById('home');
+const introLayer = document.getElementById('intro-layer');
+const welcomeText = document.querySelector('.welcome-text');
+const homeSection = document.getElementById('home');
+const navButtons = document.querySelector('.btns');
+const mainTitle = document.querySelector('.title'); 
 
-    // Welcome 글자가 사라지는 시점(약 3초 후)에 검은 배경 페이드 아웃 시작
-    setTimeout(() => {
-        if (introLayer) {
-            introLayer.style.opacity = '0';
+if (introLayer && welcomeText && homeSection) {
+    // 새로고침 시 브라우저의 스크롤 복원 기능을 끄고 무조건 맨 위로 초기화
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
+    // [정밀 교정] 부제목(UX/UI...)이 먼저 켜진 후 대제목(Soo Han...)이 켜지도록 
+    // 글자별 애니메이션 딜레이(Delay)를 자바스크립트에서 순서대로 자동 부여합니다.
+    if (mainTitle) {
+        let globalLetterIndex = 0; // 전체 글자 순서 카운터 (딜레이 계산용)
+        
+        // 하위 노드들을 탐색하며 글자를 span으로 쪼개는 함수
+        const processNodes = (node) => {
+            const childNodes = Array.from(node.childNodes);
             
-            // 배경이 완전히 투명해지면 레이어를 제거하고 메인화면 선명하게
-            setTimeout(() => {
-                introLayer.style.display = 'none';
-                if (homeSection) homeSection.classList.add('reveal'); // 흐림 해제
-            }, 1500); // CSS transition 시간(1.5s)과 맞춤
+            childNodes.forEach(child => {
+                if (child.nodeType === Node.TEXT_NODE) {
+                    const text = child.textContent;
+                    const fragment = document.createDocumentFragment();
+                    
+                    for (let char of text) {
+                        const span = document.createElement('span');
+                        
+                        if (char === " " || char === "\n" || char === "\t") {
+                            // 공백 처리 시 정렬이 깨지지 않도록 빈 span 처리 대신 일반 공백 노드로 안전하게 삽입
+                            fragment.appendChild(document.createTextNode(char));
+                        } else {
+                            span.textContent = char;
+                            // 한 글자당 0.05초의 간격으로 순서대로 누적 딜레이 계산
+                            span.style.animationDelay = `${globalLetterIndex * 0.05}s`;
+                            fragment.appendChild(span);
+                            globalLetterIndex++; // 글자가 늘어날 때마다 카운트 업
+                        }
+                    }
+                    node.replaceChild(fragment, child);
+                } else if (child.nodeType === Node.ELEMENT_NODE) {
+                    // <br>태그나 기존 줄바꿈 구조는 원본 그대로 완벽 보존
+                    processNodes(child);
+                }
+            });
+        };
+        processNodes(mainTitle);
+    }
+
+    // 초기화 상태 세팅
+    welcomeText.style.opacity = '1';
+    welcomeText.classList.add('animate'); 
+    introLayer.style.opacity = '1';
+    homeSection.style.filter = 'blur(15px)';
+    
+    if (navButtons) navButtons.classList.remove('show');
+    if (mainTitle) mainTitle.classList.remove('show'); 
+    
+    let introProgress = 0;       
+    let isIntroCombined = false;  
+    let homeRevealTime = 0;       
+
+    // 인트로 진행 중에는 브라우저 기본 스크롤을 차단하고 휠 이벤트로만 제어
+    window.addEventListener('wheel', (e) => {
+        if (!isIntroCombined) {
+            e.preventDefault(); 
+            
+            // 1. 필터가 아직 다 안 걷힌 상태 (introProgress < 1)
+            if (introProgress < 1) {
+                if (e.deltaY > 0) {
+                    introProgress += 0.05; 
+                } else {
+                    introProgress -= 0.05; 
+                }
+                introProgress = Math.min(Math.max(introProgress, 0), 1);
+
+                // 스크롤을 내릴 때 Welcome 글자 투명도 제어
+                const textProgress = Math.min(introProgress / 0.4, 1);
+                welcomeText.style.opacity = (1 - textProgress).toFixed(2);
+
+                // 검은 필터 배경 제어
+                const bgProgress = Math.min(Math.max((introProgress - 0.3) / 0.7, 0), 1);
+                introLayer.style.opacity = (1 - bgProgress).toFixed(2);
+
+                // 배경 흐림(Blur) 효과 실시간 제거
+                homeSection.style.filter = `blur(${15 - (15 * introProgress)}px)`;
+
+                // 정확히 필터가 100% 완료되어 화면이 선명해진 바로 그 순간!
+                if (introProgress >= 1) {
+                    homeRevealTime = Date.now();
+                    if (navButtons) navButtons.classList.add('show');
+                    if (mainTitle) mainTitle.classList.add('show'); 
+                }
+            } 
+            // 2. 필터는 이미 100% 다 걷혔고, 홈 화면에 강제로 머물게 하는 단계 (2.5초 잠금)
+            else {
+                if (e.deltaY > 0) {
+                    const currentTime = Date.now();
+                    if (currentTime - homeRevealTime >= 2500) { 
+                        isIntroCombined = true;
+                        introLayer.style.display = 'none';
+                        homeSection.style.filter = 'blur(0px)';
+                        homeSection.classList.add('reveal');
+                        homeSection.style.position = 'absolute';
+                    }
+                } else {
+                    introProgress = 0.95;
+                    homeRevealTime = 0;
+                    if (navButtons) navButtons.classList.remove('show');
+                    if (mainTitle) mainTitle.classList.remove('show');
+                }
+            }
         }
-    }, 3000); // 글자 애니메이션 시간과 맞춤
-});
+    }, { passive: false });
+
+    // 사용자가 다시 스크롤을 끝까지 올렸을 때 전체 요소를 완벽히 리셋하는 안전장치
+    window.addEventListener('scroll', () => {
+        if (window.scrollY === 0 && isIntroCombined) {
+            isIntroCombined = false;
+            introProgress = 0;
+            homeRevealTime = 0;
+            
+            welcomeText.classList.remove('animate');
+            void welcomeText.offsetWidth; 
+            welcomeText.classList.add('animate');
+
+            if (navButtons) navButtons.classList.remove('show');
+            if (mainTitle) mainTitle.classList.remove('show');
+
+            introLayer.style.display = 'flex';
+            introLayer.style.opacity = '1';
+            welcomeText.style.opacity = '1';
+            homeSection.style.filter = 'blur(15px)';
+            homeSection.style.position = 'fixed';
+            homeSection.classList.remove('reveal');
+        }
+    });
+}
+
 
 
 // ==========================================================================
@@ -194,7 +318,7 @@ window.addEventListener('mousemove', function(event) {
 
 
 // ==========================================================================
-// 4. 스크롤 인터랙션 (홈 어둡게 필터링 & TOP 버튼 게이지 동기화)
+// 4. [교정] 스크롤 인터랙션 (홈 어둡게 필터링 타이밍 보정 & TOP 버튼 게이지 동기화)
 // ==========================================================================
 const arrowUpBtn = document.querySelector('.arrow-up');
 
@@ -203,9 +327,9 @@ window.addEventListener('scroll', function() {
     const scrollValue = window.scrollY;
     const windowHeight = window.innerHeight;
 
-    // 1) 홈 화면 어둡게 만들기 (스크롤이 화면 높이의 30% 이상 내려가면)
+    // [타이밍 보정] 인트로가 완벽하게 끝나고, 메인화면을 지나 더 아래로 내려갈 때(1.1배수 지점) 비로소 어둡게 변합니다.
     if (home) {
-        if (scrollValue > windowHeight * 0.3) {
+        if (scrollValue > windowHeight * 1.1) {
             home.classList.add('darken');
         } else {
             home.classList.remove('darken');
